@@ -1,5 +1,7 @@
 from Api import get_animes
 import streamlit as st
+from banco_de_dados import iniciar_bd, login_usuario, registrar_usuario
+
 
 
 st.set_page_config(page_title= "Animes Atuais", layout= "wide")
