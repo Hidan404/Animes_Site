@@ -18,6 +18,8 @@ if choice == "Login":
         if login_usuario(username, password):
             st.success(f"Bem-vindo {username}!")
             st.session_state["logged_in"] = True
+            st.session_state["username"] = username
+            
         else:
             st.error("Credenciais inválidas")
 
