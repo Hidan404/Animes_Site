@@ -1,6 +1,7 @@
 import sqlite3
 import bcrypt
 
+
 def iniciar_bd():
     conector = sqlite3.connect("users.bd")
     cursor = conector.cursor()

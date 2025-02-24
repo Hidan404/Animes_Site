@@ -1,5 +1,8 @@
 import requests
+import streamlit as st
 
+
+@st.cache_data
 def get_all_animes():
     animes = []
     limit = 50  # Quantidade de animes por requisição

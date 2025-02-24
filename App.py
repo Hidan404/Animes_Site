@@ -2,6 +2,8 @@ from Api import get_all_animes
 import streamlit as st
 from banco_de_dados import iniciar_bd, login_usuario, registrar_usuario
 
+
+
 st.set_page_config(page_title="Animes Atuais", layout="wide")
 
 iniciar_bd()
@@ -30,11 +32,11 @@ elif choice == "Registrar":
 elif choice == "Animes":
     if "logged_in" in st.session_state:
         
+        
         animes = get_all_animes()
 
         if animes:  
             st.markdown("<h1 style='text-align: center; font-family: Cursive; margin-bottom: 1rem'>📺 Animes da Temporada</h1>", unsafe_allow_html=True)
-
             
             if "page" not in st.session_state:
                 st.session_state.page = 1 
