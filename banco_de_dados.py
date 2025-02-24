@@ -13,3 +13,14 @@ def iniciar_bd():
     ''')
     conector.commit()
     conector.close()
+
+
+def registrar_usuario(username,passwd):
+    conector = sqlite3.connect("users.bd")
+    cursor = conector.cursor()
+    hashed = bcrypt.hashpw(passwd.encode('utf-8'), bcrypt.gensalt())
+    cursor.execute('''
+    INSERT INTO users (username, password) VALUES (?, ?)
+    ''', (username, hashed))
+    conector.commit()
+    conector.close()
