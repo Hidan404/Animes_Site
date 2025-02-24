@@ -29,25 +29,25 @@ elif choice == "Registrar":
 
 elif choice == "Animes":
     if "logged_in" in st.session_state:
-        # Pegamos todos os animes
+        
         animes = get_all_animes()
 
-        if animes:  # Se houver animes disponíveis
+        if animes:  
             st.markdown("<h1 style='text-align: center; font-family: Cursive; margin-bottom: 1rem'>📺 Animes da Temporada</h1>", unsafe_allow_html=True)
 
-            # 📌 Configuração da paginação
+            
             if "page" not in st.session_state:
-                st.session_state.page = 1  # Página inicial
+                st.session_state.page = 1 
 
-            animes_por_pagina = 10  # Defina quantos animes quer exibir por página
+            animes_por_pagina = 10  
             total_paginas = (len(animes) // animes_por_pagina) + 1
 
-            # Definir os índices de início e fim da lista
+            
             inicio = (st.session_state.page - 1) * animes_por_pagina
             fim = inicio + animes_por_pagina
             animes_paginados = animes[inicio:fim]
 
-            # Exibir animes da página atual
+            
             for anime in animes_paginados:
                 col1, col2 = st.columns([1, 3])
                 with col1:
@@ -55,13 +55,20 @@ elif choice == "Animes":
                     st.image(image_url, width=150)
                 with col2:
                     st.subheader(anime.get('title', 'Título não disponível'))
-                    st.write(anime.get('synopsis', 'Sinopse não disponível')[:200] + "...")
+                    synopsis = anime.get('synopsis', 'Sinopse não disponível')
+
+                    if synopsis == None:
+                        synopsis = 'Sinopse não disponível'
+                    else:
+                        synopsis =  synopsis[:200] + "..."  
+
+                    st.write(synopsis)
                     aired_date = anime.get('aired', {}).get('from', 'Data não disponível')
                     st.write(f"📅 Estreia: {aired_date[:10]}")
                     st.write(f"⭐ Nota: {anime.get('score', 'Sem nota')}")
                     st.link_button("Mais detalhes", anime.get('url', '#'))
 
-            # 📌 Adicionando botões de navegação
+        
             col1, col2, col3 = st.columns([1, 3, 1])
             with col1:
                 if st.session_state.page > 1:
