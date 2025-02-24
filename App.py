@@ -2,9 +2,7 @@ from Api import get_all_animes
 import streamlit as st
 from banco_de_dados import iniciar_bd, login_usuario, registrar_usuario
 
-
-
-st.set_page_config(page_title= "Animes Atuais", layout= "wide")
+st.set_page_config(page_title="Animes Atuais", layout="wide")
 
 iniciar_bd()
 menu = ["Login", "Registrar", "Animes"]
@@ -31,28 +29,52 @@ elif choice == "Registrar":
 
 elif choice == "Animes":
     if "logged_in" in st.session_state:
+        # Pegamos todos os animes
         animes = get_all_animes()
 
-        if animes:  # Verifique se a lista de animes não está vazia
+        if animes:  # Se houver animes disponíveis
             st.markdown("<h1 style='text-align: center; font-family: Cursive; margin-bottom: 1rem'>📺 Animes da Temporada</h1>", unsafe_allow_html=True)
 
-            for anime in animes:
-                if anime:  # Verifique se o objeto 'anime' não é None
-                    col1, col2 = st.columns([1, 3])
-                    with col1:
-                        # Verificando se a imagem está presente
-                        image_url = anime.get('images', {}).get('jpg', {}).get('image_url', 'default_image.jpg')
-                        st.image(image_url, width=150)
-                    with col2:
-                        st.subheader(anime.get('title', 'Título não disponível'))
-                        st.write(anime.get('synopsis', 'Sinopse não disponível')[:200] + "...")
-                        aired_date = anime.get('aired', {}).get('from', 'Data não disponível')
-                        st.write(f"📅 Estreia: {aired_date[:10]}")
-                        st.write(f"⭐ Nota: {anime.get('score', 'Sem nota')}")
-                        st.link_button("Mais detalhes", anime.get('url', '#'))
+            # 📌 Configuração da paginação
+            if "page" not in st.session_state:
+                st.session_state.page = 1  # Página inicial
+
+            animes_por_pagina = 10  # Defina quantos animes quer exibir por página
+            total_paginas = (len(animes) // animes_por_pagina) + 1
+
+            # Definir os índices de início e fim da lista
+            inicio = (st.session_state.page - 1) * animes_por_pagina
+            fim = inicio + animes_por_pagina
+            animes_paginados = animes[inicio:fim]
+
+            # Exibir animes da página atual
+            for anime in animes_paginados:
+                col1, col2 = st.columns([1, 3])
+                with col1:
+                    image_url = anime.get('images', {}).get('jpg', {}).get('image_url', 'default_image.jpg')
+                    st.image(image_url, width=150)
+                with col2:
+                    st.subheader(anime.get('title', 'Título não disponível'))
+                    st.write(anime.get('synopsis', 'Sinopse não disponível')[:200] + "...")
+                    aired_date = anime.get('aired', {}).get('from', 'Data não disponível')
+                    st.write(f"📅 Estreia: {aired_date[:10]}")
+                    st.write(f"⭐ Nota: {anime.get('score', 'Sem nota')}")
+                    st.link_button("Mais detalhes", anime.get('url', '#'))
+
+            # 📌 Adicionando botões de navegação
+            col1, col2, col3 = st.columns([1, 3, 1])
+            with col1:
+                if st.session_state.page > 1:
+                    if st.button("⬅ Página Anterior"):
+                        st.session_state.page -= 1
+                        st.rerun()
+
+            with col3:
+                if st.session_state.page < total_paginas:
+                    if st.button("Próxima Página ➡"):
+                        st.session_state.page += 1
+                        st.rerun()
         else:
             st.error("Não foi possível carregar a lista de animes.")
     else:
         st.warning("Faça login para ver os animes!")
-
-
