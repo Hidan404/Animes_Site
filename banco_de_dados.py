@@ -24,3 +24,16 @@ def registrar_usuario(username,passwd):
     ''', (username, hashed))
     conector.commit()
     conector.close()
+
+
+def login_usuario(username, passwd):
+    conector = sqlite3.connect("users.bd")
+    cursor = conector.cursor()
+    cursor.execute('SELECT password FROM users WHERE username = ?', (username,))
+    result = cursor.fetchone()
+    conector.close()
+            
+    if result and bcrypt.checkpw(passwd.encode('utf-8'), result[0]):
+        return True
+    else:
+        return False
