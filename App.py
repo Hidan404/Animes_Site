@@ -1,4 +1,4 @@
-from Api import get_animes
+from Api import get_all_animes
 import streamlit as st
 from banco_de_dados import iniciar_bd, login_usuario, registrar_usuario
 
@@ -32,20 +32,22 @@ elif choice == "Registrar":
 elif choice == "Animes":
     
     if "logged_in" in st.session_state:
+        animes = get_all_animes()
         st.markdown("<h1 style='text-align: center; font-family: Cursive; margin-bottom: 1rem'>📺 Animes da Temporada</h1>", unsafe_allow_html=True)
 
-        animes = get_animes()
-        if len(animes) > 0:
-            for anime in animes:
-                col1, col2 = st.columns([1, 3])
-            with col1:
-                st.image(anime["images"]["jpg"]["image_url"], width=150)
-            with col2:
-                st.subheader(anime["title"])
-                st.write(anime["synopsis"][:200] + "...")
-                st.write(f"📅 Estreia: {anime['aired']['from'][0:10]}")
-                st.write(f"⭐ Nota: {anime['score']}")
-                st.link_button("Mais detalhes", anime["url"])
+    for anime in animes:
+        col1, col2 = st.columns([1, 3])
+        with col1:
+            # Verificando se a imagem está presente
+            image_url = anime.get('images', {}).get('jpg', {}).get('image_url', 'default_image.jpg')
+            st.image(image_url, width=150)
+        with col2:
+            st.subheader(anime.get('title', 'Título não disponível'))
+            st.write(anime.get('synopsis', 'Sinopse não disponível')[:200] + "...")
+            aired_date = anime.get('aired', {}).get('from', 'Data não disponível')
+            st.write(f"📅 Estreia: {aired_date[:10]}")
+            st.write(f"⭐ Nota: {anime.get('score', 'Sem nota')}")
+            st.link_button("Mais detalhes", anime.get('url', '#'))
     else:
         st.warning("Faça login para ver os animes!")
 
