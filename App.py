@@ -13,6 +13,11 @@ if "logged_in" not in st.session_state:
     st.session_state["logged_in"] = sessao_salva.get("logged_in", False)
     st.session_state["username"] = sessao_salva.get("username", None)
 
+if st.button("🔴 Sair"):
+    st.session_state["logged_in"] = False
+    st.session_state["username"] = ""
+    salvar_sessao({"logged_in": False, "username": ""})  # Limpa a sessão
+    st.rerun()  # Recarrega a págin
 
 st.markdown("### 🌗 Alternância de Tema")
 st.write("Para mudar entre **Modo Claro e Escuro**, clique no menu de configurações (☰) no canto superior direito e escolha o tema desejado.")
@@ -34,7 +39,7 @@ if choice == "Login":
             st.success(f"Bem-vindo {username}!")
             st.session_state["logged_in"] = True
             st.session_state["username"] = username
-            
+
             salvar_sessao({"logged_in": True, "username": username})
         else:
             st.error("Credenciais inválidas")
@@ -88,6 +93,9 @@ elif choice == "Animes":
         fim = inicio + animes_por_pagina
         animes_paginados = animes[inicio:fim]
 
+
+       
+
         # Exibir animes filtrados e paginados
         for anime in animes_paginados:
             col1, col2 = st.columns([1, 3])
@@ -101,6 +109,13 @@ elif choice == "Animes":
                 aired_date = anime.get('aired', {}).get('from', 'Data não disponível')
                 st.write(f"📅 Estreia: {aired_date[:10]}")
                 st.write(f"⭐ Nota: {anime.get('score', 'Sem nota')}")
+
+                trailer_url = anime.get('trailer', {}).get('url')
+                if trailer_url:
+                    st.video(trailer_url)  # Exibe o vídeo diretamente
+                else:
+                    st.write("🎥 Sem trailer disponível.")
+
                 st.link_button("Mais detalhes", anime.get('url', '#'))
 
 
