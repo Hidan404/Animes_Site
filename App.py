@@ -186,5 +186,5 @@ elif choice == "Imagens Animes":
 
     # Certifique-se de que a lista está corretamente formatada
     
-
+    
     carousel(imagens) 
