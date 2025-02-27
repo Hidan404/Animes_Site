@@ -1,5 +1,6 @@
 from Api import get_all_animes
 from sessao import carregar_sessao, salvar_sessao
+from streamlit_carousel import carousel
 import streamlit as st
 from banco_de_dados import iniciar_bd, login_usuario, registrar_usuario
 
@@ -23,7 +24,7 @@ st.markdown("### 🌗 Alternância de Tema")
 st.write("Para mudar entre **Modo Claro e Escuro**, clique no menu de configurações (☰) no canto superior direito e escolha o tema desejado.")
 
 iniciar_bd()
-menu = ["Login", "Registrar", "Animes", "Minha Lista"]
+menu = ["Login", "Registrar", "Animes", "Minha Lista","Imagens Animes"]
 choice = st.sidebar.selectbox("Menu", menu)
 
 if "favoritos" not in st.session_state:  # ADICIONADO
@@ -149,3 +150,41 @@ elif choice == "Minha Lista":
             st.write(f"- {anime.get('title')}")
     else:
         st.warning("Nenhum anime foi favoritado ainda.")        
+
+elif choice == "Imagens Animes":
+
+    st.markdown(
+    """
+    <style>
+        .carousel img {
+            width: 400px !important;
+            height: 250px !important;
+            object-fit: cover !important;
+            border-radius: 10px;
+        }
+        .main {
+            max-width: 1200px;
+            margin: auto;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+    animes = get_all_animes()  # Chamando a função corretamente
+    imagens = []
+
+    for anime in animes:
+        image_url = anime.get("images", {}).get("jpg", {}).get("large_image_url", "https://via.placeholder.com/300")
+        titulo = anime.get('title', 'Título Desconhecido')  # Garantindo um título
+        descricao = anime.get('synopsis', 'Descrição não disponível')  # Garantindo descrição
+
+        imagens.append({
+            "title": titulo,
+            "text": descricao,
+            "img": image_url
+        })
+
+    # Certifique-se de que a lista está corretamente formatada
+    
+
+    carousel(imagens) 
